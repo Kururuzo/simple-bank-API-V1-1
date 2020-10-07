@@ -1,23 +1,23 @@
 package com.bank.rest;
 
 
-import com.bank.model.Account;
-import com.bank.repository.Utils;
+import com.bank.model.Client;
+import com.bank.repository.utils.DBUtils;
+import com.bank.rest.JacksonUtils.JacksonUtils;
 import com.bank.service.AccountService;
-import org.h2.jdbcx.JdbcDataSource;
+import com.bank.service.ClientService;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path(AccountRestController.REST_URL)
+@Path("accounts")
 public class AccountRestController {
 
     //todo Боль!!! Спросить о зависимостях
-    private AccountService accountService = new AccountService(Utils.getDataSource());
+    private AccountService accountService = new AccountService(DBUtils.getDataSource());
+    private ClientService clientService = new ClientService();
 
 
     static final String REST_URL = "account";
@@ -29,11 +29,10 @@ public class AccountRestController {
      * @return String that will be returned as a text/plain response.
      */
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getIt() {
+    @Path("/all")
+    public String getAll() {
 //        System.out.println(accountService);
-        return "Account got it!";
-    }
+        return JacksonUtils.writeValue(accountService.getAll(Client.builder().id(100000).build()));    }
 
     @GET
     @Path("/{id}")
